@@ -10,8 +10,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Collection;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -6,6 +6,7 @@ import com.projetopoo.repository.EngineerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -17,6 +18,32 @@ public class EngineerService {
     private static final String SEQUENCE_NAME = Engineer.SEQUENCE_NAME;
 
     private UserService userService;
+
+    @Autowired
+    private ConstructionService constructionService;
+    @Autowired
+    private SupplyActionService supplyActionService;
+    @Autowired
+    private SupplyService supplyService;
+    @Autowired
+    private ToolService toolService;
+    @Autowired
+    private ToolActionService toolActionService;
+    @Autowired
+    private WorkerService workerService;
+    @Autowired
+    private WorkerActionService workerActionService;
+
+    @PostConstruct
+    public void init(){
+        constructionService.setEngineerService(this);
+        supplyActionService.setEngineerService(this);
+        supplyService.setEngineerService(this);
+        toolService.setEngineerService(this);
+        toolActionService.setEngineerService(this);
+        workerService.setEngineerService(this);
+        workerActionService.setEngineerService(this);
+    }
 
     public void setUserService(UserService userService){
         this.userService = userService;
@@ -60,6 +87,10 @@ public class EngineerService {
     public Engineer update(Engineer engineer){
         Engineer existingEngineer = showEngineer(engineer.getId());
 
+        existingEngineer.setCnpj(engineer.getCnpj());
+        existingEngineer.setName(engineer.getName());
+        existingEngineer.setPhoneNo(engineer.getPhoneNo());
+
         return repository.save(existingEngineer);
     }
 
@@ -68,14 +99,17 @@ public class EngineerService {
 
         repository.deleteById(engineerID);
 
-        User updateUser = userService.showUser(engineerTBD.getUserID());
+        String msg = userService.delete(engineerTBD.getUserID());
 
-        updateUser.setTypeOfUser(null);
-        updateUser.setEngOrCliID(0);
+        msg += "\n" + constructionService.deleteAllConstructionsByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + supplyActionService.deleteAllSupplyActionsByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + supplyService.deleteAllSuppliesByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + toolService.deleteAllToolsByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + toolActionService.deleteAllToolActionsByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + workerService.deleteAllWorkersByEngineerID(engineerTBD.getUserID());
+        msg += "\n" + workerActionService.deleteAllWorkerActionsByEngineerID(engineerTBD.getUserID());
 
-        userService.update(updateUser);
-
-        return "The engineer with the ID " + engineerID + "was deleted!";
+        return msg + "\n" + "The engineer with the ID " + engineerID + "was deleted!";
     }
 
     public User getUser(long engineerID){

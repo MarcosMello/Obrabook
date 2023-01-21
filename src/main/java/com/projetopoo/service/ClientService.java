@@ -1,12 +1,12 @@
 package com.projetopoo.service;
 
 import com.projetopoo.document.Client;
-import com.projetopoo.document.Engineer;
 import com.projetopoo.document.User;
 import com.projetopoo.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -17,10 +17,18 @@ public class ClientService {
     private SequenceGeneratorService idService;
     private static final String SEQUENCE_NAME = Client.SEQUENCE_NAME;
 
+    @Autowired
+    private ConstructionService constructionService;
+
     private UserService userService;
 
     public void setUserService(UserService userService){
         this.userService = userService;
+    }
+
+    @PostConstruct
+    public void init(){
+        constructionService.setClientService(this);
     }
 
     public Client create(Client client) throws Exception{
@@ -68,15 +76,9 @@ public class ClientService {
         Client clientTBD = showClient(clientID);
 
         repository.deleteById(clientID);
+        String msg = userService.delete(clientTBD.getUserID());
 
-        User updateUser = userService.showUser(clientTBD.getUserID());
-
-        updateUser.setTypeOfUser(null);
-        updateUser.setEngOrCliID(0);
-
-        userService.update(updateUser);
-
-        return "The client with the ID " + clientID + "was deleted!";
+        return msg + "\n" + "The client with the ID " + clientID + "was deleted!";
     }
 
     public User getUser(long clientID){
