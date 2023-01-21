@@ -1,5 +1,6 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Engineer;
 import com.projetopoo.document.Worker;
 import com.projetopoo.repository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,9 @@ public class WorkerService {
         repository.deleteById(workerID);
 
         return  "The Worker with the ID " + workerID + "was deleted.";
+    }
+
+    public Engineer getEngineer(long workerID){
+        return engineerService.showEngineer(showWorker(workerID).getEngineerID());
     }
 }

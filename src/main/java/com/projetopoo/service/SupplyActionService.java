@@ -1,5 +1,8 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Construction;
+import com.projetopoo.document.Engineer;
+import com.projetopoo.document.Supply;
 import com.projetopoo.document.SupplyAction;
 import com.projetopoo.repository.SupplyActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,12 @@ public class SupplyActionService {
     private static final String SEQUENCE_NAME = SupplyAction.SEQUENCE_NAME;
 
     private EngineerService engineerService;
+
+    @Autowired
+    private SupplyService supplyService;
+
+    @Autowired
+    private ConstructionService constructionService;
 
     public void setEngineerService(EngineerService engineerService){
         this.engineerService = engineerService;
@@ -84,5 +93,17 @@ public class SupplyActionService {
         repository.deleteById(supplyActionID);
 
         return  "The Supply Action with the ID " + supplyActionID + "was deleted.";
+    }
+
+    public Engineer getEngineer(long supplyActionID){
+        return engineerService.showEngineer(showSupplyAction(supplyActionID).getEngineerID());
+    }
+
+    public Supply getSupply(long supplyActionID){
+        return supplyService.showSupply(showSupplyAction(supplyActionID).getSupplyID());
+    }
+
+    public Construction getConstruction(long supplyActionID){
+        return constructionService.showConstruction(showSupplyAction(supplyActionID).getConstructionID());
     }
 }

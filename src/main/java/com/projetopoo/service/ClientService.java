@@ -54,7 +54,7 @@ public class ClientService {
         }
     }
 
-    private List<Client> showClientByCPF(String cpf) {
+    public List<Client> showClientByCPF(String cpf) {
         return repository.findByCpf(cpf);
     }
 
@@ -69,16 +69,21 @@ public class ClientService {
     public Client update(Client client){
         Client existingClient = showClient(client.getId());
 
+        existingClient.setCpf(client.getCpf());
+        existingClient.setName(client.getName());
+        existingClient.setPhoneNo(client.getPhoneNo());
+
         return repository.save(existingClient);
     }
 
     public String delete(long clientID){
         Client clientTBD = showClient(clientID);
 
-        repository.deleteById(clientID);
-        String msg = userService.delete(clientTBD.getUserID());
+        String msg = userService.deleteUser(clientTBD.getUserID());
 
-        return msg + "\n" + "The client with the ID " + clientID + "was deleted!";
+        repository.deleteById(clientID);
+
+        return msg + "\n" + "The client with the ID " + clientID + " was deleted!";
     }
 
     public User getUser(long clientID){

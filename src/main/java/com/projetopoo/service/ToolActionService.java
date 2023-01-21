@@ -1,5 +1,6 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Engineer;
 import com.projetopoo.document.ToolAction;
 import com.projetopoo.repository.ToolActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class ToolActionService {
         return repository.save(toolAction);
     }
 
-    public List<ToolAction> showSupplies(){
+    public List<ToolAction> showToolActions(){
         return repository.findAll();
     }
 
@@ -84,5 +85,9 @@ public class ToolActionService {
         repository.deleteById(toolActionID);
 
         return  "The Tool Action with the ID " + toolActionID + "was deleted.";
+    }
+
+    public Engineer getEngineer(long toolActionID){
+        return engineerService.showEngineer(showToolAction(toolActionID).getEngineerID());
     }
 }

@@ -1,7 +1,6 @@
 package com.projetopoo.service;
 
 import com.projetopoo.document.User;
-import com.projetopoo.repository.ClientRepository;
 import com.projetopoo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,15 +24,15 @@ public class UserService {
     private static final String SEQUENCE_NAME = User.SEQUENCE_NAME;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         clientService.setUserService(this);
         engineerService.setUserService(this);
     }
 
-    public User create(User user){
+    public User create(User user) {
         List<User> existingUser = showUsersByEmail(user.getEmail());
 
-        if (existingUser.isEmpty()){
+        if (existingUser.isEmpty()) {
             user.setId(idService.getSequenceNumber(SEQUENCE_NAME));
 
             return repository.save(user);
@@ -42,23 +41,25 @@ public class UserService {
         }
     }
 
-    public List<User> showUsers(){
+    public List<User> showUsers() {
         return repository.findAll();
     }
 
-    public List<User> showUsersByEmail(String email){ return repository.findByEmail(email); }
+    public List<User> showUsersByEmail(String email) {
+        return repository.findByEmail(email);
+    }
 
-    public User showUser(long userID){
+    public User showUser(long userID) {
         return repository.findById(userID).get();
     }
 
-    public User update(User user, boolean includeType){
+    public User update(User user, boolean includeType) {
         User existingUser = showUser(user.getId());
 
         existingUser.setEmail(user.getEmail());
         existingUser.setPassword(user.getPassword());
 
-        if (includeType){
+        if (includeType) {
             existingUser.setTypeOfUser(user.getTypeOfUser());
             existingUser.setEngOrCliID(user.getEngOrCliID());
         }
@@ -66,23 +67,27 @@ public class UserService {
         return repository.save(existingUser);
     }
 
-    public User update(User user){
+    public User update(User user) {
         return update(user, false);
     }
 
-    public String delete(long userID){
+    public String delete(long userID) {
         User userTBD = showUser(userID);
 
-        String rsp = "The user associated with the ID " + userID + "was deleted!";
+        String rsp = "";
 
-        repository.deleteById(userID);
-
-        if (userTBD.getTypeOfUser().equals("Engenheiro")){
+        if (userTBD.getTypeOfUser().equals("Engenheiro")) {
             rsp += "\n" + engineerService.delete(userTBD.getEngOrCliID());
-        } else if (userTBD.getTypeOfUser().equals("Cliente")){
+        } else if (userTBD.getTypeOfUser().equals("Cliente")) {
             rsp += "\n" + clientService.delete(userTBD.getEngOrCliID());
         }
 
         return rsp;
+    }
+
+    public String deleteUser(long userID) {
+        repository.deleteById(userID);
+
+        return "The user associated with the ID " + userID + " was deleted!";
     }
 }

@@ -1,5 +1,6 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Engineer;
 import com.projetopoo.document.Tool;
 import com.projetopoo.repository.ToolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,9 @@ public class ToolService {
         repository.deleteById(toolID);
 
         return  "The Tool with the ID " + toolID + "was deleted.";
+    }
+
+    public Engineer getEngineer(long toolID){
+        return engineerService.showEngineer(showTool(toolID).getEngineerID());
     }
 }

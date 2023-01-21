@@ -29,8 +29,16 @@ public class ClientREST {
         return service.showClient(clientID);
     }
 
+    @GetMapping("/client/cpf/{cpf}")
+    public List<Client> showClientByCPF(@PathVariable String cpf) { return service.showClientByCPF(cpf); }
+
     @GetMapping("/client/{clientID}/user")
     public User showUser(@PathVariable long clientID){ return service.getUser(clientID); }
+
+    @PutMapping("/client")
+    public Client update(@RequestBody Client client){
+        return service.update(client);
+    }
 
     @DeleteMapping("/client/{clientID}")
     public String delete(@PathVariable long clientID){

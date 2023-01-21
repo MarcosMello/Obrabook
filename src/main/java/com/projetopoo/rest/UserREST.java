@@ -23,9 +23,17 @@ public class UserREST {
         return service.showUsers();
     }
 
+    @GetMapping("/user/email/{email}")
+    public List<User> showUsersByEmail(@PathVariable String email) { return service.showUsersByEmail(email); }
+
     @GetMapping("/user/{userID}")
     public User showUser(@PathVariable long userID){
         return service.showUser(userID);
+    }
+
+    @PutMapping("/user")
+    public User update(@RequestBody User user){
+        return service.update(user);
     }
 
     @DeleteMapping("/user/{userID}")

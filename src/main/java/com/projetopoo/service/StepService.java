@@ -1,5 +1,6 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Construction;
 import com.projetopoo.document.Step;
 import com.projetopoo.repository.StepRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,18 @@ public class StepService {
     private SequenceGeneratorService idService;
     private static final String SEQUENCE_NAME = Step.SEQUENCE_NAME;
 
-    @Autowired
     private ConstructionService constructionService;
+
+    public void setConstructionService(ConstructionService constructionService){
+        this.constructionService = constructionService;
+    }
 
     public Step create(Step step){
         step.setId(idService.getSequenceNumber(SEQUENCE_NAME));
         return repository.save(step);
     }
 
-    public List<Step> showSupplies(){
+    public List<Step> showSteps(){
         return repository.findAll();
     }
 
@@ -51,12 +55,16 @@ public class StepService {
             delete(steps.getId());
         }
 
-        return "Deleted every Step that has a connection with the EngineerID " + constructionID;
+        return "Deleted every Step that has a connection with the constructionID " + constructionID;
     }
 
-    public String delete(long constructionID){
-        repository.deleteById(constructionID);
+    public String delete(long stepID){
+        repository.deleteById(stepID);
 
-        return  "The Step with the ID " + constructionID + "was deleted.";
+        return  "The Step with the ID " + stepID + "was deleted.";
+    }
+
+    public Construction getConstruction(long stepID){
+        return constructionService.showConstruction(showStep(stepID).getConstructionID());
     }
 }

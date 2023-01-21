@@ -7,6 +7,7 @@ import com.projetopoo.repository.ConstructionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -16,6 +17,14 @@ public class ConstructionService {
     @Autowired
     private SequenceGeneratorService idService;
     private static final String SEQUENCE_NAME = Construction.SEQUENCE_NAME;
+
+    @Autowired
+    private StepService stepService;
+
+    @PostConstruct
+    public void init(){
+        stepService.setConstructionService(this);
+    }
 
     private EngineerService engineerService;
     private ClientService clientService;
@@ -61,6 +70,8 @@ public class ConstructionService {
 
     public String delete(long constructionID){
         repository.deleteById(constructionID);
+
+        stepService.deleteAllStepsByConstructionID(constructionID);
 
         return  "The Construction with the ID " + constructionID + "was deleted.";
     }

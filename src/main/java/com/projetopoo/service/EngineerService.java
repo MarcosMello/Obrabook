@@ -72,7 +72,7 @@ public class EngineerService {
         }
     }
 
-    private List<Engineer> showEngineersByCNPJ(String cnpj) {
+    public List<Engineer> showEngineersByCNPJ(String cnpj) {
         return repository.findByCnpj(cnpj);
     }
 
@@ -97,9 +97,7 @@ public class EngineerService {
     public String delete(long engineerID){
         Engineer engineerTBD = showEngineer(engineerID);
 
-        repository.deleteById(engineerID);
-
-        String msg = userService.delete(engineerTBD.getUserID());
+        String msg = userService.deleteUser(engineerTBD.getUserID());
 
         msg += "\n" + constructionService.deleteAllConstructionsByEngineerID(engineerTBD.getUserID());
         msg += "\n" + supplyActionService.deleteAllSupplyActionsByEngineerID(engineerTBD.getUserID());
@@ -109,7 +107,9 @@ public class EngineerService {
         msg += "\n" + workerService.deleteAllWorkersByEngineerID(engineerTBD.getUserID());
         msg += "\n" + workerActionService.deleteAllWorkerActionsByEngineerID(engineerTBD.getUserID());
 
-        return msg + "\n" + "The engineer with the ID " + engineerID + "was deleted!";
+        repository.deleteById(engineerID);
+
+        return msg + "\n" + "The engineer with the ID " + engineerID + " was deleted!";
     }
 
     public User getUser(long engineerID){

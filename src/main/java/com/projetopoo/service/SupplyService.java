@@ -1,5 +1,6 @@
 package com.projetopoo.service;
 
+import com.projetopoo.document.Engineer;
 import com.projetopoo.document.Supply;
 import com.projetopoo.repository.SupplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,9 @@ public class SupplyService {
         repository.deleteById(supplyID);
 
         return  "The Supply with the ID " + supplyID + "was deleted.";
+    }
+
+    public Engineer getEngineer(long supplyID){
+        return engineerService.showEngineer(showSupply(supplyID).getEngineerID());
     }
 }
