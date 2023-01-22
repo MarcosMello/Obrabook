@@ -20,6 +20,9 @@ public class SupplyAction {
     private long id;
 
     @NonNull
+    private int quantity;
+
+    @NonNull
     private boolean isReport;
     @NonNull
     private String data;
@@ -32,4 +35,6 @@ public class SupplyAction {
     private long engineerID;
     @NonNull
     private long constructionID;
+
+    public boolean getIsReport() { return isReport; }
 }

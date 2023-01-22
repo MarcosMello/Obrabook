@@ -27,6 +27,9 @@ public class WorkerActionService {
     @Autowired
     private Config config;
 
+    @Autowired
+    private WorkerService workerService;
+
     private EngineerService engineerService;
 
     public void setEngineerService(EngineerService engineerService){
@@ -35,6 +38,9 @@ public class WorkerActionService {
 
     public WorkerAction create(WorkerAction workerAction){
         workerAction.setId(idService.getSequenceNumber(SEQUENCE_NAME));
+
+        workerService.showWorker(workerAction.getWorkerID()).setAssigned(true);
+
         return repository.save(workerAction);
     }
 
@@ -68,9 +74,13 @@ public class WorkerActionService {
     public WorkerAction update(WorkerAction workerAction){
         WorkerAction existingWorkerAction = showWorkerAction(workerAction.getId());
 
+        if (workerAction.getIsReport() && !existingWorkerAction.getIsReport()){
+            workerService.showWorker(workerAction.getWorkerID()).setAssigned(false);
+        }
+
         existingWorkerAction.setDescription(workerAction.getDescription());
         existingWorkerAction.setData(workerAction.getData());
-        existingWorkerAction.setReport(workerAction.isReport());
+        existingWorkerAction.setReport(workerAction.getIsReport());
 
         return repository.save(existingWorkerAction);
     }
@@ -112,6 +122,10 @@ public class WorkerActionService {
     }
 
     public String delete(long workerActionID){
+        if (!showWorkerAction(workerActionID).getIsReport()){
+            workerService.showWorker(showWorkerAction(workerActionID).getWorkerID()).setAssigned(false);
+        }
+
         repository.deleteById(workerActionID);
 
         return  "The Worker Action with the ID " + workerActionID + "was deleted.";

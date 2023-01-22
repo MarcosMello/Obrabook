@@ -36,6 +36,9 @@ public class Worker {
     @NonNull
     private int status;
 
+    @NonNull
+    private boolean isAssigned;
+
     private String cpf;
     private int age;
     private String street;

@@ -32,4 +32,6 @@ public class WorkerAction {
     private long engineerID;
     @NonNull
     private long constructionID;
+
+    public boolean getIsReport() { return isReport; }
 }

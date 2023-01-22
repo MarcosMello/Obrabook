@@ -24,6 +24,7 @@ public class ToolService {
 
     public Tool create(Tool tool){
         tool.setId(idService.getSequenceNumber(SEQUENCE_NAME));
+        tool.setAssigned(false);
         return repository.save(tool);
     }
 

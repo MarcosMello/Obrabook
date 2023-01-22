@@ -24,10 +24,13 @@ public class ToolActionService {
     private SequenceGeneratorService idService;
     private static final String SEQUENCE_NAME = ToolAction.SEQUENCE_NAME;
 
-    private EngineerService engineerService;
-
     @Autowired
     private Config config;
+
+    @Autowired
+    private ToolService toolService;
+
+    private EngineerService engineerService;
 
     public void setEngineerService(EngineerService engineerService){
         this.engineerService = engineerService;
@@ -35,6 +38,9 @@ public class ToolActionService {
 
     public ToolAction create(ToolAction toolAction){
         toolAction.setId(idService.getSequenceNumber(SEQUENCE_NAME));
+
+        toolService.showTool(toolAction.getToolID()).setAssigned(true);
+
         return repository.save(toolAction);
     }
 
@@ -68,9 +74,13 @@ public class ToolActionService {
     public ToolAction update(ToolAction toolAction){
         ToolAction existingToolAction = showToolAction(toolAction.getId());
 
+        if (toolAction.getIsReport() && !existingToolAction.getIsReport()){
+            toolService.showTool(toolAction.getToolID()).setAssigned(false);
+        }
+
         existingToolAction.setData(toolAction.getData());
         existingToolAction.setDescription(toolAction.getDescription());
-        existingToolAction.setReport(toolAction.isReport());
+        existingToolAction.setReport(toolAction.getIsReport());
 
         return repository.save(existingToolAction);
     }
@@ -112,6 +122,10 @@ public class ToolActionService {
     }
 
     public String delete(long toolActionID){
+        if (!showToolAction(toolActionID).getIsReport()){
+            toolService.showTool(showToolAction(toolActionID).getToolID()).setAssigned(false);
+        }
+
         repository.deleteById(toolActionID);
 
         return  "The Tool Action with the ID " + toolActionID + "was deleted.";

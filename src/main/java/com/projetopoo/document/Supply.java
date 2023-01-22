@@ -20,6 +20,9 @@ public class Supply {
     private long id;
 
     @NonNull
+    private int quantity;
+
+    @NonNull
     private String name;
     @NonNull
     private float pricePerKg;

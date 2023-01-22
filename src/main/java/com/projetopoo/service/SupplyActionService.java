@@ -41,9 +41,16 @@ public class SupplyActionService {
         this.engineerService = engineerService;
     }
 
-    public SupplyAction create(SupplyAction supplyAction){
+    public SupplyAction create(SupplyAction supplyAction) throws Exception{
         supplyAction.setId(idService.getSequenceNumber(SEQUENCE_NAME));
-        return repository.save(supplyAction);
+
+        if (supplyAction.getQuantity() <= supplyService.showSupply(supplyAction.getSupplyID()).getQuantity()){
+            supplyService.showSupply(supplyAction.getSupplyID()).setQuantity(supplyService.showSupply(supplyAction.getSupplyID()).getQuantity() - supplyAction.getQuantity());
+
+            return repository.save(supplyAction);
+        } else {
+            throw new Exception("There isn't enough of this supply");
+        }
     }
 
     public List<SupplyAction> showSupplyActions(){
@@ -78,7 +85,7 @@ public class SupplyActionService {
 
         existingSupplyAction.setDescription(supplyAction.getDescription());
         existingSupplyAction.setData(supplyAction.getData());
-        existingSupplyAction.setReport(supplyAction.isReport());
+        existingSupplyAction.setReport(supplyAction.getIsReport());
 
         return repository.save(existingSupplyAction);
     }
@@ -120,6 +127,12 @@ public class SupplyActionService {
     }
 
     public String delete(long supplyActionID){
+        if (!showSupplyAction(supplyActionID).getIsReport()){
+            SupplyAction supplyAction = showSupplyAction(supplyActionID);
+
+            supplyService.showSupply(supplyAction.getSupplyID()).setQuantity(supplyService.showSupply(supplyAction.getSupplyID()).getQuantity() + supplyAction.getQuantity());
+        }
+
         repository.deleteById(supplyActionID);
 
         return  "The Supply Action with the ID " + supplyActionID + "was deleted.";

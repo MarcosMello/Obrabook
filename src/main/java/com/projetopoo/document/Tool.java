@@ -26,6 +26,9 @@ public class Tool {
     @NonNull
     private String price;
 
+    @NonNull
+    private boolean isAssigned;
+
     private float averageLifeSpan;
     private String provider;
 

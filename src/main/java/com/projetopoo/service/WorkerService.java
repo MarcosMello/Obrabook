@@ -24,6 +24,7 @@ public class WorkerService {
 
     public Worker create(Worker worker){
         worker.setId(idService.getSequenceNumber(SEQUENCE_NAME));
+        worker.setAssigned(false);
         return repository.save(worker);
     }
 
