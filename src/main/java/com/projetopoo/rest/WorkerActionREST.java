@@ -24,6 +24,9 @@ public class WorkerActionREST {
         return service.showWorkerActions();
     }
 
+    @GetMapping("/workerActions/ordered")
+    public Object orderedByDate(){ return service.orderByDate(); }
+
     @GetMapping("/workerAction/{workerActionID}")
     public WorkerAction showWorkerAction(@PathVariable long workerActionID){
         return service.showWorkerAction(workerActionID);

@@ -41,6 +41,9 @@ public class SupplyActionREST {
         return service.update(supplyAction);
     }
 
+    @GetMapping("/supplyActions/ordered")
+    public Object orderedByDate(){ return service.orderByDate(); }
+
     @DeleteMapping("/supplyAction/{supplyActionID}")
     public String delete(@PathVariable long supplyActionID){
         return service.delete(supplyActionID);

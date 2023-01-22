@@ -1,12 +1,20 @@
 package com.projetopoo.service;
 
+import com.projetopoo.config.Config;
 import com.projetopoo.document.Engineer;
 import com.projetopoo.document.ToolAction;
 import com.projetopoo.repository.ToolActionRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.stereotype.Service;
 
+import java.util.Hashtable;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Service
 public class ToolActionService {
@@ -17,6 +25,9 @@ public class ToolActionService {
     private static final String SEQUENCE_NAME = ToolAction.SEQUENCE_NAME;
 
     private EngineerService engineerService;
+
+    @Autowired
+    private Config config;
 
     public void setEngineerService(EngineerService engineerService){
         this.engineerService = engineerService;
@@ -33,6 +44,25 @@ public class ToolActionService {
 
     public ToolAction showToolAction(long toolActionID){
         return repository.findById(toolActionID).get();
+    }
+
+    public List<ToolAction> showToolActionByDate(String data) { return repository.findByData(data); }
+
+    public Object orderByDate(){
+        Hashtable<String, Object> my_dict = new Hashtable<String, Object>();
+
+        Aggregation agg = newAggregation(
+                Aggregation.group("data"),
+                Aggregation.sort(Sort.Direction.DESC, "_id")
+        );
+
+        MongoOperations mongoOps = config.mongoTemplate();
+
+        for (Document date : mongoOps.aggregate(agg, "toolActions", Document.class).getMappedResults()){
+            my_dict.put(date.get("_id").toString(), showToolActionByDate(date.get("_id").toString()));
+        }
+
+        return my_dict;
     }
 
     public ToolAction update(ToolAction toolAction){

@@ -11,4 +11,6 @@ public interface SupplyActionRepository extends MongoRepository<SupplyAction, Lo
     List<SupplyAction> findByConstructionID(long constructionID);
 
     List<SupplyAction> findBySupplyID(long supplyID);
+
+    List<SupplyAction> findByData(String data);
 }

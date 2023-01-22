@@ -24,6 +24,9 @@ public class ToolActionREST {
         return service.showToolActions();
     }
 
+    @GetMapping("/toolActions/ordered")
+    public Object orderedByDate(){ return service.orderByDate(); }
+
     @GetMapping("/toolAction/{toolActionID}")
     public ToolAction showToolAction(@PathVariable long toolActionID){
         return service.showToolAction(toolActionID);

@@ -11,4 +11,6 @@ public interface ToolActionRepository extends MongoRepository<ToolAction, Long> 
     List<ToolAction> findByConstructionID(long constructionID);
 
     List<ToolAction> findByToolID(long toolID);
+
+    List<ToolAction> findByData(String data);
 }

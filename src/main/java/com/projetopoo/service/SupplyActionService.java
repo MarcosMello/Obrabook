@@ -1,14 +1,22 @@
 package com.projetopoo.service;
 
+import com.projetopoo.config.Config;
 import com.projetopoo.document.Construction;
 import com.projetopoo.document.Engineer;
 import com.projetopoo.document.Supply;
 import com.projetopoo.document.SupplyAction;
 import com.projetopoo.repository.SupplyActionRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.stereotype.Service;
 
+import java.util.Hashtable;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 
 @Service
 public class SupplyActionService {
@@ -17,6 +25,9 @@ public class SupplyActionService {
     @Autowired
     private SequenceGeneratorService idService;
     private static final String SEQUENCE_NAME = SupplyAction.SEQUENCE_NAME;
+
+    @Autowired
+    private Config config;
 
     private EngineerService engineerService;
 
@@ -37,6 +48,25 @@ public class SupplyActionService {
 
     public List<SupplyAction> showSupplyActions(){
         return repository.findAll();
+    }
+
+    public List<SupplyAction> showSupplyActionByDate(String data) { return repository.findByData(data); }
+
+    public Object orderByDate(){
+        Hashtable<String, Object> my_dict = new Hashtable<String, Object>();
+
+        Aggregation agg = newAggregation(
+                Aggregation.group("data"),
+                Aggregation.sort(Sort.Direction.DESC, "_id")
+        );
+
+        MongoOperations mongoOps = config.mongoTemplate();
+
+        for (Document date : mongoOps.aggregate(agg, "toolActions", Document.class).getMappedResults()){
+            my_dict.put(date.get("_id").toString(), showSupplyActionByDate(date.get("_id").toString()));
+        }
+
+        return my_dict;
     }
 
     public SupplyAction showSupplyAction(long supplyActionID){

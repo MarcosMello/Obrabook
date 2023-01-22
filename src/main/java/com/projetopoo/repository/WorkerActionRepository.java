@@ -11,4 +11,6 @@ public interface WorkerActionRepository extends MongoRepository<WorkerAction, Lo
     List<WorkerAction> findByWorkerID(long workerID);
 
     List<WorkerAction> findByConstructionID(long constructionID);
+
+    List<WorkerAction> findByData(String data);
 }
